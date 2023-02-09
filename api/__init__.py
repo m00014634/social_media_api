@@ -5,6 +5,7 @@ from user import bp as user_bp
 from posts import bp as posts_bp
 from photo import bp as photo_bp
 
+
 bp = Blueprint('api',__name__,url_prefix='/api')
 
 
