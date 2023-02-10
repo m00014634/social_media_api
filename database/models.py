@@ -10,8 +10,16 @@ class User(db.Model):
     first_name =  db.Column(db.String,nullable = False)
     last_name = db.Column(db.String,nullable = True)
     email = db.Column(db.String, nullable=False)
-    phone_number =  db.Column(db.String,nullable = False)
+    phone_number =  db.Column(db.String,nullable = False,unique =True)
     about =  db.Column(db.String,nullable = True)
+
+    # Create user
+    def registration(self,username,first_name,last_name,email,phone_number,about):
+        new_user = User(username=username, first_name=first_name, last_name=last_name, email=email,
+                        phone_number=phone_number, about=about)
+
+        db.session.add(new_user)
+        db.session.commit()
 
 
     # Change username
@@ -59,7 +67,7 @@ class Post(db.Model):
     header = db.Column(db.String,nullable = False)
     main_text = db.Column(db.String,nullable = False)
     publish_date = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer,db.ForeignKey ('user.id'))
+    user_id = db.Column(db.Integer,db.ForeignKey ('users.id'))
     post_likes = db.Column(db.Integer, default=0)
     user = db.relationship('User')
 
@@ -98,20 +106,20 @@ class Photo_post(db.Model):
     __tablename__ = 'photos_for_post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     photo_path = db.Column(db.String,nullable = False)
-    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'),ondelete = 'SET NULL')
+    post_id = db.Column(db.Integer,db.ForeignKey('posts.id',ondelete = 'SET NULL'))
     post = db.relationship('Post')
 
 
 
 # Comments table
-class Comment(db.model):
+class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     text = db.Column(db.String,nullable = False)
     likes = db.Column(db.Integer,nullable = True,default = 0)
     data = db.Column(db.DateTime)
 
-    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'),ondelete = 'SET NULL')
+    post_id = db.Column(db.Integer,db.ForeignKey('posts.id',ondelete = 'SET NULL'))
 
     # delete comment
     def delete_comment(self,comment_id):
@@ -143,7 +151,7 @@ class Table(db.Model):
     __tablename__ = 'hashtags'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     hashtag_name = db.Column(db.String,nullable = False, unique = True)
-    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'),ondelete = 'SET NULL')
+    post_id = db.Column(db.Integer,db.ForeignKey('posts.id',ondelete = 'SET NULL'))
     post = db.relationship('Post')
 
 
@@ -152,7 +160,7 @@ class Table(db.Model):
 class Passwords(db.Model):
     __tablename__ = 'passwords'
     password = db.Column(db.String,nullable = False)
-    user_id = db.Column(db.Integer,db.ForeignKey('users.id'),ondelete = 'SET NULL')
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete = 'SET NULL'),primary_key = True)
     users = db.relationship('User')
 
     # Password generate

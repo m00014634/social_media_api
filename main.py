@@ -1,10 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from comment import bp as comment_bp
-from hashtag import bp as hashtag_bp
-from user import bp as user_bp
-from posts import bp as posts_bp
-from photo import bp as photo_bp
+
 
 app = Flask(__name__)
 
@@ -12,6 +8,12 @@ app = Flask(__name__)
 db = SQLAlchemy()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///media.db'
 db.init_app(app)
+
+from comment import bp as comment_bp
+from hashtag import bp as hashtag_bp
+from user import bp as user_bp
+from posts import bp as posts_bp
+from photo import bp as photo_bp
 
 
 # Component registration

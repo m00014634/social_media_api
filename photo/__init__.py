@@ -18,5 +18,6 @@ class GetChangeDeletePhotoById(Resource):
 
     def change (self,photo_id): # change_photo_by_id
         pass
+
     def delete(self,photo_id): # delete_photo_by_id
         pass
