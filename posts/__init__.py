@@ -17,11 +17,11 @@ class GetAllPostsOrCreate(Resource):
 
 @api.route('/<int:post_id>')
 class GetOrChangeOrDeletePostById(Resource):
-    def get(self): # get exact post
+    def get(self,post_id): # get exact post
         pass
 
-    def change(self): # change exact post
+    def change(self,post_id): # change exact post
         pass
 
-    def delete(self): # delete exact post
+    def delete(self,post_id): # delete exact post
         pass

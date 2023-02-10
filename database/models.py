@@ -142,7 +142,7 @@ class Comment(db.model):
 class Table(db.Model):
     __tablename__ = 'hashtags'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    hash_name = db.Column(db.String,nullable = False, unique = True)
+    hashtag_name = db.Column(db.String,nullable = False, unique = True)
     post_id = db.Column(db.Integer,db.ForeignKey('posts.id'),ondelete = 'SET NULL')
     post = db.relationship('Post')
 
