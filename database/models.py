@@ -70,6 +70,18 @@ class Post(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey ('users.id'))
     post_likes = db.Column(db.Integer, default=0)
     user = db.relationship('User')
+    post_image = db.relationship('Photo_post')
+
+
+    # adding post
+    def create_post(self,header,main_text,publish_date,user_id,image):
+        new_post = Post(header = header,main_text = main_text,publish_date = publish_date,user_id =user_id)
+        image_for_post = Photo_post()
+        image_for_post.photo_path = f'image/{image}'
+        self.post_image.append(image_for_post)
+        db.session.add(new_post)
+        db.session.add(image_for_post)
+        db.session.commit()
 
     # change main_text
     def change_main_text(self,post_id,new_main_text):
@@ -107,8 +119,18 @@ class Photo_post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     photo_path = db.Column(db.String,nullable = False)
     post_id = db.Column(db.Integer,db.ForeignKey('posts.id',ondelete = 'SET NULL'))
-    post = db.relationship('Post')
 
+    # Change photo
+    def change_post_image(self,photo_id,new_photo):
+        old_photo = Photo_post.query.get_or_404(photo_id)
+        old_photo.photo_path = f'media/{new_photo}'
+        db.session.commit()
+
+    # Delete photo
+    def delete_post_image(self,photo_id):
+        current_photo = Photo_post.query.get_or_404(photo_id)
+        db.session.delete(current_photo)
+        db.session.commit()
 
 
 # Comments table
@@ -118,8 +140,15 @@ class Comment(db.Model):
     text = db.Column(db.String,nullable = False)
     likes = db.Column(db.Integer,nullable = True,default = 0)
     data = db.Column(db.DateTime)
-
     post_id = db.Column(db.Integer,db.ForeignKey('posts.id',ondelete = 'SET NULL'))
+
+
+   # Add comment
+    def create_comment(self,text,data,post_id):
+        comment = Comment(text = text,data = data,post_id = post_id)
+        db.session.add(comment)
+        db.session.commit()
+
 
     # delete comment
     def delete_comment(self,comment_id):
@@ -155,6 +184,12 @@ class Table(db.Model):
     post = db.relationship('Post')
 
 
+    def create_hashtag(self,hashtag_name,post_id):
+        hashtag = Table(hashtag_name = hashtag_name ,post_id = post_id)
+        db.session.add(hashtag)
+        db.session.commit()
+
+
 
 # Password table
 class Passwords(db.Model):
@@ -164,8 +199,11 @@ class Passwords(db.Model):
     users = db.relationship('User')
 
     # Password generate
-    def set_password(self,password):
+    def set_password(self,password,user_id):
         self.password = generate_password_hash(password)
+        new = Passwords(user_id = user_id,password = self.password)
+        db.session.add(new)
+        db.session.commit()
 
     # Check password
     def check_password(self,password):
@@ -177,8 +215,11 @@ class Passwords(db.Model):
     def change_password(self,user_id,new_password):
         current_password = Passwords.query.get_or_404(user_id)
 
-        if current_password == new_password:
+        if check_password_hash(current_password.password,new_password):
             return 'В пароле ничего не изменено'
-        current_password.password = new_password
+
+        current_password.password = generate_password_hash(new_password)
         db.session.commit()
+
+
 
